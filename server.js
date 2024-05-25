@@ -15,6 +15,22 @@ const rooms = new Map();
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
+    socket.on('create-room', (userId) => {
+        const roomId = uuidv4(); // สร้างรหัสห้องใหม่โดยใช้ uuid
+        socket.join(roomId); // เข้าร่วมห้องใหม่ทันที
+        
+        if (!rooms.has(roomId)) {
+            rooms.set(roomId, new Set());
+        }
+        rooms.get(roomId).add(userId); // เพิ่มผู้ใช้ที่สร้างห้องเข้าไปในเซ็ตของผู้ใช้ในห้อง
+        
+        // ส่งรหัสห้องกลับไปยังผู้ใช้ที่สร้างห้อง
+        socket.emit('room-created', roomId);
+        
+        // ส่งข้อความยินดีให้ผู้ใช้ทุกคนในห้องใหม่ทราบว่ามีผู้ใช้เข้าร่วม
+        socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has created and joined the room.` });
+    });
+    
     socket.on('join-room', (roomId, userId) => {
         socket.join(roomId);
         // เก็บ userId ในห้อง

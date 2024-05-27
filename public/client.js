@@ -43,7 +43,7 @@ socket.on('chat-message', ({ userId, msg }) => {
 document.getElementById('join-room-button').addEventListener('click', joinRoom);
 
 // เชื่อมต่อฟังก์ชัน createRoom() กับปุ่ม "Create Room"
-document.getElementById('create-room-button').addEventListener('click', createRoom);
+document.getElementById('create-room-button').addEventListener('click', createAndJoinRoom);
 
 // เชื่อมต่อฟังก์ชันสำหรับส่งข้อความแชท กับปุ่ม "Send"
 document.getElementById('send-button').addEventListener('click', () => {

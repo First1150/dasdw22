@@ -24,7 +24,11 @@ function createRoom() {
     
     // ส่งข้อความยินดีเข้าร่วมห้อง
     socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has created and joined the room.` });
+
+    // เพิ่มเงื่อนไขเข้าร่วมห้องในฝั่งเซิร์ฟเวอร์
+    socket.emit('join-room', roomId, userId);
 }
+
 
 
 // รับข้อความแชทและแสดงบนหน้าเว็บ

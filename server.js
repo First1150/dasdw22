@@ -15,14 +15,15 @@ const rooms = new Map();
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
-    socket.on('create-room', (userId) => {
+    socket.on('create-and-join-room', (userId, roomName) => {
         const roomId = uuidv4(); // สร้างรหัสห้องใหม่โดยใช้ uuid
         socket.join(roomId); // เข้าร่วมห้องใหม่ทันที
         
+        // สร้างข้อมูลห้องและผู้ใช้
         if (!rooms.has(roomId)) {
-            rooms.set(roomId, new Set());
+            rooms.set(roomId, new Map());
         }
-        rooms.get(roomId).add(userId); // เพิ่มผู้ใช้ที่สร้างห้องเข้าไปในเซ็ตของผู้ใช้ในห้อง
+        rooms.get(roomId).set(userId, roomName); // เพิ่มผู้ใช้และชื่อห้องเข้าไปใน Map ของห้อง
         
         // ส่งรหัสห้องกลับไปยังผู้ใช้ที่สร้างห้อง
         socket.emit('room-created', roomId);
@@ -31,16 +32,19 @@ io.on('connection', (socket) => {
         socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has created and joined the room.` });
     });
     
+    
     socket.on('join-room', (roomId, userId) => {
         socket.join(roomId);
-        // เก็บ userId ในห้อง
+        // เก็บ userId และชื่อห้อง
         if (!rooms.has(roomId)) {
-            rooms.set(roomId, new Set());
+            rooms.set(roomId, new Map());
         }
-        rooms.get(roomId).add(userId);
+        const roomName = rooms.get(roomId).get(userId);
+        
         // ส่งข้อความยินดีเข้าร่วมห้อง
-        socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has joined the room.` });
+        socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has joined the room ${roomName}.` });
     });
+    
 
     socket.on('chat-message', (roomId, userId, msg) => {
         // ส่งข้อความให้ผู้ใช้ในห้องแชท

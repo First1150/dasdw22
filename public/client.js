@@ -19,7 +19,13 @@ function joinRoom() {
 function createRoom() {
     const userId = prompt('Enter your user ID:');
     socket.emit('create-room', userId);
+    // เพิ่มการเข้าร่วมห้องทันทีหลังจากสร้างห้อง
+    socket.join(roomId);
+    
+    // ส่งข้อความยินดีเข้าร่วมห้อง
+    socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has created and joined the room.` });
 }
+
 
 // รับข้อความแชทและแสดงบนหน้าเว็บ
 socket.on('chat-message', ({ userId, msg }) => {

@@ -44,8 +44,10 @@ io.on('connection', (socket) => {
 
     socket.on('chat-message', (roomId, userId, msg) => {
         // ส่งข้อความให้ผู้ใช้ในห้องแชท
-        socket.to(roomId).emit('chat-message', { userId, msg });
+        socket.to(roomId).emit('chat-message', { userId, msg }); // ส่งถึงผู้ในห้องยกเว้นตัวเอง
+        socket.emit('chat-message', { userId, msg }); // ส่งข้อความกลับไปยังผู้ส่งเองด้วย
     });
+    
 
     socket.on('disconnect', () => {
         // ออกจากห้องแชทที่เคยเข้าร่วม

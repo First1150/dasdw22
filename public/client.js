@@ -10,26 +10,24 @@ let userId;
 
 // ฟังก์ชันสำหรับสร้างห้องใหม่และเข้าร่วมห้องทันที
 function createAndJoinRoom() {
-    const userId = prompt('Enter your user ID:');
+    const userIdInput = prompt('Enter your user ID:');
     const roomName = prompt('Enter the room name:');
-    socket.emit('create-and-join-room', userId, roomName);
+    socket.emit('create-and-join-room', userIdInput, roomName);
 }
 
+// รับรหัสห้องจากเซิร์ฟเวอร์
 socket.on('room-created', (roomId) => {
     // เมื่อได้รหัสห้องก็ทำการเข้าร่วมห้อง
-    joinRoom(roomId);
+    const userIdInput = prompt('Enter your user ID:');
+    socket.emit('join-room', roomId, userIdInput);
 });
 
-function joinRoom(roomId) {
-    const userId = prompt('Enter your user ID:');
-    socket.emit('join-room', roomId, userId);
+// ฟังก์ชันสำหรับเข้าร่วมห้อง
+function joinRoom() {
+    const roomId = prompt('Enter room ID:');
+    const userIdInput = prompt('Enter your user ID:');
+    socket.emit('join-room', roomId, userIdInput);
 }
-
-// ส่วนอื่นๆ เช่นการรับข้อความแชท ส่งข้อความ และเชื่อมต่อกับ HTML คงไม่ต้องเปลี่ยนแปลง
-
-
-
-
 
 // รับข้อความแชทและแสดงบนหน้าเว็บ
 socket.on('chat-message', ({ userId, msg }) => {

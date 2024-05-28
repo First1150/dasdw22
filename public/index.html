@@ -10,7 +10,7 @@
     <div id="chat-room-section">
         <div id="room-selection">
             <button id="join-room-button">Join Room</button>
-            <button id="create-room-button">Create Room</button> <!-- เพิ่มปุ่มสร้างห้อง -->
+            <button id="create-room-button">Create Room</button>
         </div>
         <div id="chat-display"></div>
         <div id="message-input-section">
@@ -19,28 +19,7 @@
         </div>
     </div>
 
-    <!-- เพิ่ม input สำหรับรับ userId -->
-    <div id="user-id-input-section" style="display: none;">
-        <input type="text" id="user-id-input" placeholder="Enter your user ID">
-        <button id="join-room-submit">Join Room</button>
-    </div>
-
-    <!-- เชื่อมต่อปุ่ม "Join Room" กับฟังก์ชัน joinRoom() -->
-    <script>
-        document.getElementById('join-room-button').addEventListener('click', () => {
-            document.getElementById('user-id-input-section').style.display = 'block';
-        });
-
-        document.getElementById('join-room-submit').addEventListener('click', () => {
-            const roomId = prompt('Enter room ID:');
-            const userId = document.getElementById('user-id-input').value;
-            joinRoom(roomId, userId);
-        });
-    </script>
-
     <script src="/socket.io/socket.io.js"></script>
     <script src="client.js"></script>
-</body>
-
 </body>
 </html>

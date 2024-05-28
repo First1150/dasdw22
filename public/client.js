@@ -19,15 +19,16 @@ function createRoom() {
     }
 }
 
-socket.on('chat-message', ({ userId, msg }) => {
+socket.on('chat-message', ({ senderId, msg }) => {
     const messageElement = document.createElement('div');
-    if (userId === userId) {
+    if (senderId === userId) {
         messageElement.textContent = `You: ${msg}`;
     } else {
-        messageElement.textContent = `${userId}: ${msg}`;
+        messageElement.textContent = `${senderId}: ${msg}`;
     }
     document.getElementById('chat-display').appendChild(messageElement);
 });
+
 
 
 socket.on('room-created', ({ roomId, roomName }) => {

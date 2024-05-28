@@ -1,48 +1,46 @@
-const socket = io(); // เชื่อมต่อกับเซิร์ฟเวอร์ Socket.IO
+const socket = io();
 
 socket.on('connect', () => {
     console.log('Connected to the server');
 });
 
-// สร้างรหัสห้องและรหัสผู้ใช้
-let roomId;
-let userId;
+let roomId; // รหัสห้อง
+let userId; // รหัสผู้ใช้
 
-// ฟังก์ชันสำหรับสร้างห้องใหม่และเข้าร่วมห้องทันที
-function createAndJoinRoom() {
-    const userIdInput = prompt('Enter your user ID:');
-    const roomName = prompt('Enter the room name:');
-    socket.emit('create-and-join-room', userIdInput, roomName);
+function joinRoom(roomId) {
+    userId = prompt('Enter your user ID:');
+    socket.emit('join-room', roomId, userId);
 }
 
-// รับรหัสห้องจากเซิร์ฟเวอร์
-socket.on('room-created', (roomId) => {
-    // เมื่อได้รหัสห้องก็ทำการเข้าร่วมห้อง
-    const userIdInput = prompt('Enter your user ID:');
-    socket.emit('join-room', roomId, userIdInput);
-});
-
-// ฟังก์ชันสำหรับเข้าร่วมห้อง
-function joinRoom() {
-    const roomId = prompt('Enter room ID:');
-    const userIdInput = prompt('Enter your user ID:');
-    socket.emit('join-room', roomId, userIdInput);
+function createRoom() {
+    const roomName = prompt('Enter room name:');
+    if (roomName) {
+        socket.emit('create-room', roomName);
+    }
 }
 
-// รับข้อความแชทและแสดงบนหน้าเว็บ
 socket.on('chat-message', ({ userId, msg }) => {
     const messageElement = document.createElement('div');
     messageElement.textContent = `${userId}: ${msg}`;
     document.getElementById('chat-display').appendChild(messageElement);
 });
 
-// เชื่อมต่อฟังก์ชัน joinRoom() กับปุ่ม "Join Room"
-document.getElementById('join-room-button').addEventListener('click', joinRoom);
+socket.on('room-created', ({ roomId, roomName }) => {
+    const roomButton = document.createElement('button');
+    roomButton.textContent = roomName;
+    roomButton.addEventListener('click', () => {
+        joinRoom(roomId);
+    });
+    document.getElementById('room-selection').appendChild(roomButton);
+});
 
-// เชื่อมต่อฟังก์ชัน createRoom() กับปุ่ม "Create Room"
-document.getElementById('create-room-button').addEventListener('click', createAndJoinRoom);
+document.getElementById('join-room-button').addEventListener('click', () => {
+    roomId = prompt('Enter room ID:');
+    joinRoom(roomId);
+});
 
-// เชื่อมต่อฟังก์ชันสำหรับส่งข้อความแชท กับปุ่ม "Send"
+document.getElementById('create-room-button').addEventListener('click', createRoom);
+
 document.getElementById('send-button').addEventListener('click', () => {
     const message = document.getElementById('message-input').value;
     if (message.trim()) {

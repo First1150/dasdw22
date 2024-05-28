@@ -29,8 +29,9 @@ io.on('connection', (socket) => {
         socket.emit('room-created', roomId);
         
         // ส่งข้อความยินดีให้ผู้ใช้ทุกคนในห้องใหม่ทราบว่ามีผู้ใช้เข้าร่วม
-        socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has created and joined the room.` });
+        io.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has created and joined the room.` });
     });
+    
     
     
     socket.on('join-room', (roomId, userId) => {

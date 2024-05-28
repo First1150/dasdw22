@@ -48,3 +48,14 @@ document.getElementById('send-button').addEventListener('click', () => {
         document.getElementById('message-input').value = '';
     }
 });
+
+// ส่วนนี้เพิ่มการรับข้อความจากผู้ใช้และส่งไปยังเซิร์ฟเวอร์
+document.getElementById('message-input').addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        const message = document.getElementById('message-input').value;
+        if (message.trim()) {
+            socket.emit('chat-message', roomId, userId, message);
+            document.getElementById('message-input').value = '';
+        }
+    }
+});

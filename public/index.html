@@ -7,11 +7,19 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="chat-room-section">
-        <div id="room-selection">
-            <button id="join-room-button">Join Room</button>
-            <button id="create-room-button">Create Room</button>
-        </div>
+    <div id="home-page">
+        <button id="join-room-button">Join Room</button>
+        <button id="create-room-button">Create Room</button>
+    </div>
+
+    <div id="room-selection-page" style="display: none;">
+        <input type="text" id="user-name" placeholder="Enter your user name...">
+        <input type="text" id="room-name" placeholder="Enter room name...">
+        <button id="enter-room-button">Enter Room</button>
+        <div id="existing-rooms"></div>
+    </div>
+
+    <div id="chat-room-section" style="display: none;">
         <div id="chat-display"></div>
         <div id="message-input-section">
             <input type="text" id="message-input" placeholder="Type your message...">

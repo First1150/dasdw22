@@ -21,7 +21,6 @@ io.on('connection', (socket) => {
         }
         rooms.get(roomId).add(userId);
         socket.to(roomId).emit('chat-message', { userId: 'system', msg: `User ${userId} has joined the room.` });
-        io.to(socket.id).emit('join-room');
     });
 
     socket.on('create-room', (roomName) => {

@@ -1,15 +1,16 @@
 const socket = io();
-let roomId;
-let userId;
 
-document.getElementById('join-room-button').addEventListener('click', () => {
-    document.getElementById('home-page').style.display = 'none';
-    document.getElementById('room-selection-page').style.display = 'block';
+socket.on('connect', () => {
+    console.log('Connected to the server');
 });
 
-document.getElementById('create-room-button').addEventListener('click', () => {
-    createRoom();
-});
+let roomId; // รหัสห้อง
+let userId; // รหัสผู้ใช้
+
+function joinRoom(roomId) {
+    userId = prompt('Enter your user ID:');
+    socket.emit('join-room', roomId, userId);
+}
 
 function createRoom() {
     const roomName = prompt('Enter room name:');
@@ -18,33 +19,27 @@ function createRoom() {
     }
 }
 
+socket.on('chat-message', ({ userId, msg }) => {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `${userId}: ${msg}`;
+    document.getElementById('chat-display').appendChild(messageElement);
+});
+
 socket.on('room-created', ({ roomId, roomName }) => {
     const roomButton = document.createElement('button');
     roomButton.textContent = roomName;
     roomButton.addEventListener('click', () => {
         joinRoom(roomId);
     });
-    document.getElementById('existing-rooms').appendChild(roomButton);
+    document.getElementById('room-selection').appendChild(roomButton);
 });
 
-document.getElementById('enter-room-button').addEventListener('click', () => {
-    const userName = document.getElementById('user-name').value;
-    const roomName = document.getElementById('room-name').value;
-    if (userName.trim() && roomName.trim()) {
-        userId = userName;
-        joinRoom(roomName);
-    }
+document.getElementById('join-room-button').addEventListener('click', () => {
+    roomId = prompt('Enter room ID:');
+    joinRoom(roomId);
 });
 
-function joinRoom(roomName) {
-    roomId = roomName; // Just for the sake of this example, you might need a better way to handle roomIds
-    socket.emit('join-room', roomId, userId);
-}
-
-socket.on('join-room', () => {
-    document.getElementById('room-selection-page').style.display = 'none';
-    document.getElementById('chat-room-section').style.display = 'block';
-});
+document.getElementById('create-room-button').addEventListener('click', createRoom);
 
 document.getElementById('send-button').addEventListener('click', () => {
     const message = document.getElementById('message-input').value;
@@ -52,10 +47,4 @@ document.getElementById('send-button').addEventListener('click', () => {
         socket.emit('chat-message', roomId, userId, message);
         document.getElementById('message-input').value = '';
     }
-});
-
-socket.on('chat-message', ({ userId, msg }) => {
-    const messageElement = document.createElement('div');
-    messageElement.textContent = `${userId}: ${msg}`;
-    document.getElementById('chat-display').appendChild(messageElement);
 });
